@@ -1,7 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* Importar CSS de Leaflet */
+/* Importar CSS de Leaflet PRIMERO */
 @import 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+
+/* Luego Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Estilos globales para el mapa */
 body, html {
@@ -26,4 +31,166 @@ app-root {
 /* Fix para iconos de Leaflet en Angular */
 .leaflet-default-icon-path {
   background-image: url('https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png');
+}
+
+/* Crítico: asegurar que el mapa sea visible */
+#map {
+  height: 100% !important;
+  width: 100% !important;
+  z-index: 1 !important;
+  min-height: 250px; /* Mínimo en mobile */
+}
+
+/* Responsive: diferentes alturas según tamaño de pantalla */
+@media (min-width: 640px) {
+  #map {
+    min-height: 400px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  #map {
+    min-height: calc(100vh - 180px) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #map {
+    min-height: calc(100vh - 160px) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  #map {
+    min-height: calc(100vh - 140px) !important;
+  }
+}
+
+@media (min-width: 1536px) {
+  #map {
+    min-height: calc(100vh - 120px) !important;
+  }
+}
+
+/* Asegurar que el contenedor principal use toda la altura disponible */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+/* Navegación fija y responsiva */
+nav {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Footer siempre al fondo */
+footer {
+  margin-top: auto;
+}
+
+/* Override Tailwind que puede estar ocultando el mapa */
+.leaflet-container {
+  background: #ddd !important;
+  height: 100% !important;
+  font-family: inherit !important;
+}
+
+.leaflet-tile-pane {
+  z-index: 1 !important;
+}
+
+.leaflet-overlay-pane {
+  z-index: 2 !important;
+}
+
+.leaflet-marker-pane {
+  z-index: 3 !important;
+}
+
+/* Mejoras para dispositivos táctiles */
+.leaflet-container {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mejorar controles de zoom en móvil */
+.leaflet-control-zoom {
+  font-size: 18px !important;
+}
+
+.leaflet-control-zoom a {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+}
+
+/* Popup responsive */
+.leaflet-popup-content {
+  margin: 8px 12px !important;
+  font-size: 14px !important;
+}
+
+@media (max-width: 768px) {
+  .leaflet-popup-content {
+    font-size: 12px !important;
+    margin: 6px 10px !important;
+  }
+}
+
+/* Smooth scrolling para el panel */
+.overflow-y-auto {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mejoras para botones táctiles */
+button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Optimizaciones para pantallas ultra anchas */
+@media (min-width: 1920px) {
+  /* Contenedor principal más ancho en pantallas 4K */
+  .container {
+    max-width: 1920px;
+  }
+  
+  /* Texto más grande en pantallas muy anchas */
+  h1, h2, h3 {
+    font-size: 1.2em;
+  }
+  
+  /* Botones más grandes */
+  button {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  /* Ajustes para pantallas 2K/4K */
+  .container {
+    max-width: 2400px;
+  }
+  
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.75rem; }
+  
+  /* Panel lateral más ancho en pantallas muy grandes */
+  .panel-large {
+    width: 400px;
+  }
+}
+
+/* Asegurar que el mapa use todo el ancho disponible */
+@media (min-width: 1280px) {
+  .leaflet-container {
+    max-width: 100%;
+  }
+}
+
+/* Evitar que el contenido se vea demasiado estirado */
+.max-content-width {
+  max-width: 2000px;
+  margin: 0 auto;
 }
