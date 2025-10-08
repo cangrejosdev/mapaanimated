@@ -1,1 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Importar CSS de Leaflet */
+@import 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+
+/* Estilos globales para el mapa */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Asegurar que Leaflet se vea correctamente */
+.leaflet-container {
+  font-family: inherit;
+}
+
+/* Fix para iconos de Leaflet en Angular */
+.leaflet-default-icon-path {
+  background-image: url('https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png');
+}

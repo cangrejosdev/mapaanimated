@@ -22,7 +22,8 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ]
           },
           "configurations": {
@@ -75,11 +76,15 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ]
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "8bf5485d-6307-4315-af81-d2eaa0f09ad1"
   }
 }
