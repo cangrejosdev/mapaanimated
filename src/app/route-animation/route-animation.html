@@ -1,1 +1,232 @@
-<p>route-animation works!</p>
+    <!-- Container Principal - 100% responsive -->
+    <div class="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+
+      <!-- Header Superior con gradiente moderno -->
+      <header class="shadow-2xl bg-gradient-to-r from-orange-500 via-orange-300 to-orange-200">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16 sm:h-20">
+            <!-- Logo y Título -->
+            <div class="flex items-center space-x-3">
+              <div class="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
+                <span class="text-2xl sm:text-3xl">🚚</span>
+              </div>
+              <div>
+                <h1 class="text-lg font-bold text-white sm:text-xl lg:text-2xl">GPS Tracker Pro</h1>
+                <p class="hidden text-xs sm:text-sm text-white/80 sm:block">Rastreo en Tiempo Real</p>
+              </div>
+            </div>
+
+            <!-- Estado Badge -->
+            <div class="flex items-center px-3 py-2 space-x-2 rounded-full bg-white/20 backdrop-blur-md sm:px-4">
+              <div class="w-2 h-2 rounded-full {{ isTracking() ? 'bg-green-400 animate-pulse' : 'bg-gray-300' }}"></div>
+              <span class="text-xs font-medium text-white sm:text-sm">{{ isTracking() ? 'Activo' : 'Inactivo' }}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Contenedor Principal - Layout Responsive con Mapa Predominante -->
+      <div class="flex flex-col flex-1 gap-2 p-2 overflow-hidden lg:flex-row sm:p-4 sm:gap-4">
+
+        <!-- Mapa - Ocupa la mayor parte de la pantalla con card style -->
+        <div class="h-[60vh] sm:h-[65vh] md:h-[70vh] lg:h-auto lg:flex-1 relative order-2 lg:order-1">
+          <!-- Card contenedor del mapa con bordes redondeados y sombra -->
+          <div class="w-full h-full overflow-hidden bg-white border-2 shadow-2xl rounded-2xl border-slate-300">
+            <div id="map" class="w-full h-full rounded-2xl"></div>
+          </div>
+
+          <!-- Badge de información flotante sobre el mapa -->
+          @if (currentPosition()) {
+            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-3 sm:p-4 max-w-xs z-[1000] border-2 border-slate-300">
+              <div class="flex items-center mb-2 space-x-2">
+                <span class="text-lg">�</span>
+                <h3 class="text-sm font-bold text-gray-800 sm:text-base">Ubicación Actual</h3>
+              </div>
+              <div class="space-y-1 text-xs text-gray-600 sm:text-sm">
+                <p><strong>Lat:</strong> {{ currentPosition()!.lat.toFixed(6) }}</p>
+                <p><strong>Lng:</strong> {{ currentPosition()!.lng.toFixed(6) }}</p>
+                @if (currentSpeed() !== null) {
+                  <div class="pt-2 mt-2 border-t border-gray-200">
+                    <p class="font-bold text-indigo-600">🚗 {{ currentSpeed() }} km/h</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Panel de Control - Sidebar compacto para maximizar el mapa -->
+        <div class="w-full lg:w-80 xl:w-96 bg-white rounded-2xl shadow-2xl border-2 border-slate-300 order-1 lg:order-2 flex flex-col max-h-[40vh] lg:max-h-full">
+
+          <!-- Header del Panel -->
+          <!-- <div class="p-4 text-white bg-gradient-to-r from-slate-800 to-slate-900 sm:p-6 rounded-t-2xl">
+            <h2 class="flex items-center gap-2 text-lg font-bold sm:text-xl">
+              <span>⚡</span> Panel de Control
+            </h2>
+            <p class="mt-1 text-xs sm:text-sm text-slate-300">Configure el rastreo GPS</p>
+          </div> -->
+
+          <!-- Contenido Scrolleable del Panel -->
+          <div class="flex-1 p-4 space-y-4 overflow-y-auto sm:p-6 sm:space-y-6">
+
+            <!-- Input de Unidad - Card moderna -->
+            <div class="p-4 border-2 shadow-lg bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl sm:p-5 border-slate-300">
+              <label for="unidad" class="flex items-center gap-2 mb-2 text-sm font-bold text-gray-800 sm:text-base">
+                <span>🏷️</span> Nombre de la Unidad
+              </label>
+              <input
+                id="unidad"
+                type="text"
+                [(ngModel)]="unidadName"
+                placeholder="Ingrese el nombre de la unidad a rastrear (ej: unidad, vehiculo01, truck_05)"
+                [disabled]="isTracking()"
+                class="w-full px-4 py-3 text-sm transition-all duration-200 bg-white border-2 shadow-sm sm:py-4 sm:text-base border-slate-300 rounded-xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
+              >
+            </div>
+
+            <!-- Botones de Control - Flexbox Horizontal Responsive -->
+            <div class="space-y-3">
+              <!-- Botón Iniciar - Ancho completo -->
+              <button
+                (click)="startTracking()"
+                [disabled]="isTracking() || !unidadName()"
+                class="w-full px-6 py-4 text-sm font-bold text-white transition-all duration-300 shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:hover:scale-100 sm:text-base"
+              >
+                <span class="flex items-center justify-center gap-2">
+                  {{ isTracking() ? '🔄 Rastreando...' : '🚀 Iniciar Tracking' }}
+                </span>
+              </button>
+
+              <!-- Botones Detener y Limpiar - Flex Horizontal -->
+              <div class="flex gap-2 sm:gap-3">
+                <!-- Botón Detener -->
+                <button
+                  (click)="stopTracking()"
+                  [disabled]="!isTracking()"
+                  class="flex-1 px-4 py-3 text-xs font-bold text-white transition-all duration-300 shadow-lg bg-gradient-to-r from-red-500 to-rose-600 rounded-xl hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:hover:scale-100 sm:text-sm"
+                >
+                  <span class="flex items-center justify-center gap-1 sm:gap-2">
+                    <span>⏹️</span>
+                    <span class="hidden sm:inline">Detener</span>
+                  </span>
+                </button>
+
+                <!-- Botón Limpiar -->
+                <button
+                  (click)="clearMap()"
+                  class="flex-1 px-4 py-3 text-xs font-bold text-white transition-all duration-300 shadow-lg bg-gradient-to-r from-orange-500 to-amber-600 rounded-xl hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-500/50 sm:text-sm"
+                >
+                  <span class="flex items-center justify-center gap-1 sm:gap-2">
+                    <span>🗑️</span>
+                    <span class="hidden sm:inline">Limpiar</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Estado del Sistema - Card con gradiente -->
+            <div class="p-4 border-2 border-blue-300 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl sm:p-5">
+              <h3 class="flex items-center gap-2 mb-3 text-sm font-bold text-gray-800 sm:text-base">
+                <span>📊</span> Estado del Sistema
+              </h3>
+              <div class="space-y-2 text-xs sm:text-sm">
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-600">Estado:</span>
+                  <span class="font-bold {{ isTracking() ? 'text-green-600' : 'text-gray-600' }}">
+                    {{ status() }}
+                  </span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-600">Última actualización:</span>
+                  <span class="font-medium text-gray-800">{{ lastUpdate() || 'Nunca' }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-600">Total puntos:</span>
+                  <span class="font-bold text-indigo-600">{{ routePoints().length }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lista de Puntos de Ruta - Scrolleable -->
+            @if (routePoints().length > 0) {
+              <div class="p-4 border-2 shadow-lg bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl sm:p-5 border-slate-300">
+                <h3 class="flex items-center gap-2 mb-3 text-sm font-bold text-gray-800 sm:text-base">
+                  <span>🗺️</span> Ruta ({{ routePoints().length }} puntos)
+                </h3>
+                <div class="pr-2 space-y-2 overflow-y-auto max-h-48 custom-scrollbar">
+                  @for (point of routePoints(); track point.name) {
+                    <div class="p-3 transition-shadow bg-white border-2 shadow-sm rounded-xl border-slate-300 hover:shadow-md">
+                      <p class="text-xs font-bold text-gray-900 sm:text-sm">{{ point.name }}</p>
+                      <p class="mt-1 text-xs text-gray-500">
+                        {{ point.coords[0].toFixed(4) }}, {{ point.coords[1].toFixed(4) }}
+                      </p>
+                      @if (point.timestamp) {
+                        <p class="mt-1 text-xs text-indigo-600">🕐 {{ point.timestamp }}</p>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Moderno -->
+      <footer class="border-t-4 border-indigo-500 bg-gradient-to-r from-slate-800 to-slate-900">
+        <div class="px-4 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8 sm:py-6">
+          <div class="flex flex-col items-center justify-between space-y-3 sm:flex-row sm:space-y-0">
+
+            <!-- Info del Sistema -->
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm text-slate-300">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span>Sistema Activo</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span>📊</span>
+                <span>Angular 20</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span>🗺️</span>
+                <span>Leaflet Maps</span>
+              </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="text-xs text-center sm:text-sm text-slate-400 sm:text-right">
+              <p>&copy; 2025 GPS VIP Tracker Pro</p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Estilos CSS personalizados para scrollbar -->
+    <style>
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      #map {
+        position: relative;
+        z-index: 0;
+      }
+
+      .leaflet-container {
+        font-family: inherit;
+      }
+    </style>
+  </div>
