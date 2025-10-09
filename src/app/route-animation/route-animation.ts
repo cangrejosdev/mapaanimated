@@ -43,7 +43,7 @@ interface Position {
     <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
 
       <!-- Header Superior con gradiente moderno -->
-      <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 shadow-2xl">
+      <header class="bg-gradient-to-r from-orange-500 via-orange-300 to-orange-200 shadow-2xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between h-16 sm:h-20">
             <!-- Logo y Título -->
@@ -66,16 +66,19 @@ interface Position {
         </div>
       </header>
 
-      <!-- Contenedor Principal - Layout Responsive -->
-      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      <!-- Contenedor Principal - Layout Responsive con Mapa Predominante -->
+      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden p-2 sm:p-4 gap-2 sm:gap-4">
 
-        <!-- Mapa - Ocupa todo el ancho en móvil, flex-1 en desktop -->
-        <div class="h-64 sm:h-96 lg:h-auto lg:flex-1 relative order-2 lg:order-1">
-          <div id="map" class="w-full h-full"></div>
+        <!-- Mapa - Ocupa la mayor parte de la pantalla con card style -->
+        <div class="h-[60vh] sm:h-[65vh] md:h-[70vh] lg:h-auto lg:flex-1 relative order-2 lg:order-1">
+          <!-- Card contenedor del mapa con bordes redondeados y sombra -->
+          <div class="w-full h-full bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-slate-300">
+            <div id="map" class="w-full h-full rounded-2xl"></div>
+          </div>
 
           <!-- Badge de información flotante sobre el mapa -->
           @if (currentPosition()) {
-            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-3 sm:p-4 max-w-xs z-[1000]">
+            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-3 sm:p-4 max-w-xs z-[1000] border-2 border-slate-300">
               <div class="flex items-center space-x-2 mb-2">
                 <span class="text-lg">�</span>
                 <h3 class="font-bold text-gray-800 text-sm sm:text-base">Ubicación Actual</h3>
@@ -93,22 +96,22 @@ interface Position {
           }
         </div>
 
-        <!-- Panel de Control - Sidebar responsive -->
-        <div class="w-full lg:w-96 xl:w-[28rem] bg-white shadow-2xl order-1 lg:order-2 flex flex-col">
+        <!-- Panel de Control - Sidebar compacto para maximizar el mapa -->
+        <div class="w-full lg:w-80 xl:w-96 bg-white rounded-2xl shadow-2xl border-2 border-slate-300 order-1 lg:order-2 flex flex-col max-h-[40vh] lg:max-h-full">
 
           <!-- Header del Panel -->
-          <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-4 sm:p-6">
+          <!-- <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-4 sm:p-6 rounded-t-2xl">
             <h2 class="text-lg sm:text-xl font-bold flex items-center gap-2">
               <span>⚡</span> Panel de Control
             </h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1">Configure el rastreo GPS</p>
-          </div>
+          </div> -->
 
           <!-- Contenido Scrolleable del Panel -->
           <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
 
             <!-- Input de Unidad - Card moderna -->
-            <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
+            <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4 sm:p-5 shadow-lg border-2 border-slate-300">
               <label for="unidad" class="flex items-center gap-2 text-sm sm:text-base font-bold text-gray-800 mb-2">
                 <span>🏷️</span> Nombre de la Unidad
               </label>
@@ -116,45 +119,54 @@ interface Position {
                 id="unidad"
                 type="text"
                 [(ngModel)]="unidadName"
-                placeholder="Ej: unidad, vehiculo01..."
+                placeholder="Ingrese el nombre de la unidad a rastrear (ej: unidad, vehiculo01, truck_05)"
                 [disabled]="isTracking()"
                 class="w-full px-4 py-3 sm:py-4 text-sm sm:text-base bg-white border-2 border-slate-300 rounded-xl focus:ring-4 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200 disabled:bg-slate-100 disabled:cursor-not-allowed shadow-sm"
               >
             </div>
 
-            <!-- Botones de Control - Grid Responsive -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <!-- Botón Iniciar -->
+            <!-- Botones de Control - Flexbox Horizontal Responsive -->
+            <div class="space-y-3">
+              <!-- Botón Iniciar - Ancho completo -->
               <button
                 (click)="startTracking()"
                 [disabled]="isTracking() || !unidadName()"
-                class="col-span-1 sm:col-span-2 px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300 text-sm sm:text-base"
+                class="w-full px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300 text-sm sm:text-base"
               >
                 <span class="flex items-center justify-center gap-2">
                   {{ isTracking() ? '🔄 Rastreando...' : '🚀 Iniciar Tracking' }}
                 </span>
               </button>
 
-              <!-- Botón Detener -->
-              <button
-                (click)="stopTracking()"
-                [disabled]="!isTracking()"
-                class="px-6 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300 text-sm sm:text-base"
-              >
-                <span class="flex items-center justify-center gap-2">⏹️ Detener</span>
-              </button>
+              <!-- Botones Detener y Limpiar - Flex Horizontal -->
+              <div class="flex gap-2 sm:gap-3">
+                <!-- Botón Detener -->
+                <button
+                  (click)="stopTracking()"
+                  [disabled]="!isTracking()"
+                  class="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-500/50 disabled:from-slate-400 disabled:to-slate-500 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300 text-xs sm:text-sm"
+                >
+                  <span class="flex items-center justify-center gap-1 sm:gap-2">
+                    <span>⏹️</span>
+                    <span class="hidden sm:inline">Detener</span>
+                  </span>
+                </button>
 
-              <!-- Botón Limpiar -->
-              <button
-                (click)="clearMap()"
-                class="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-500/50 transition-all duration-300 text-sm sm:text-base"
-              >
-                <span class="flex items-center justify-center gap-2">🗑️ Limpiar</span>
-              </button>
+                <!-- Botón Limpiar -->
+                <button
+                  (click)="clearMap()"
+                  class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-500/50 transition-all duration-300 text-xs sm:text-sm"
+                >
+                  <span class="flex items-center justify-center gap-1 sm:gap-2">
+                    <span>🗑️</span>
+                    <span class="hidden sm:inline">Limpiar</span>
+                  </span>
+                </button>
+              </div>
             </div>
 
             <!-- Estado del Sistema - Card con gradiente -->
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-blue-200">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-4 sm:p-5 shadow-lg border-2 border-blue-300">
               <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
                 <span>📊</span> Estado del Sistema
               </h3>
@@ -178,13 +190,13 @@ interface Position {
 
             <!-- Lista de Puntos de Ruta - Scrolleable -->
             @if (routePoints().length > 0) {
-              <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
+              <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4 sm:p-5 shadow-lg border-2 border-slate-300">
                 <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
                   <span>🗺️</span> Ruta ({{ routePoints().length }} puntos)
                 </h3>
                 <div class="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
                   @for (point of routePoints(); track point.name) {
-                    <div class="bg-white rounded-xl p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="bg-white rounded-xl p-3 shadow-sm border-2 border-slate-300 hover:shadow-md transition-shadow">
                       <p class="font-bold text-gray-900 text-xs sm:text-sm">{{ point.name }}</p>
                       <p class="text-xs text-gray-500 mt-1">
                         {{ point.coords[0].toFixed(4) }}, {{ point.coords[1].toFixed(4) }}
@@ -264,7 +276,7 @@ interface Position {
 export class RouteAnimationComponent implements OnInit, AfterViewInit, OnDestroy {
   private http = inject(HttpClient);
 
-  unidadName = signal<string>('unidad');
+  unidadName = signal<string>('');
   isTracking = signal<boolean>(false);
   status = signal<string>('Detenido');
   lastUpdate = signal<string>('');
